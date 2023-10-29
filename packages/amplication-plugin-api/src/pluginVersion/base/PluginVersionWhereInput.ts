@@ -14,8 +14,10 @@ import { ApiProperty } from "@nestjs/swagger";
 import { JsonFilter } from "../../util/JsonFilter";
 import { Type } from "class-transformer";
 import { IsOptional } from "class-validator";
+import { DateTimeFilter } from "../../util/DateTimeFilter";
 import { StringNullableFilter } from "../../util/StringNullableFilter";
 import { StringFilter } from "../../util/StringFilter";
+import { BooleanNullableFilter } from "../../util/BooleanNullableFilter";
 
 @InputType()
 class PluginVersionWhereInput {
@@ -29,6 +31,17 @@ class PluginVersionWhereInput {
     nullable: true,
   })
   configurations?: JsonFilter;
+
+  @ApiProperty({
+    required: false,
+    type: DateTimeFilter,
+  })
+  @Type(() => DateTimeFilter)
+  @IsOptional()
+  @Field(() => DateTimeFilter, {
+    nullable: true,
+  })
+  createdAt?: DateTimeFilter;
 
   @ApiProperty({
     required: false,
@@ -51,6 +64,17 @@ class PluginVersionWhereInput {
     nullable: true,
   })
   id?: StringFilter;
+
+  @ApiProperty({
+    required: false,
+    type: BooleanNullableFilter,
+  })
+  @Type(() => BooleanNullableFilter)
+  @IsOptional()
+  @Field(() => BooleanNullableFilter, {
+    nullable: true,
+  })
+  isLatest?: BooleanNullableFilter;
 
   @ApiProperty({
     required: false,
@@ -84,6 +108,17 @@ class PluginVersionWhereInput {
     nullable: true,
   })
   settings?: JsonFilter;
+
+  @ApiProperty({
+    required: false,
+    type: DateTimeFilter,
+  })
+  @Type(() => DateTimeFilter)
+  @IsOptional()
+  @Field(() => DateTimeFilter, {
+    nullable: true,
+  })
+  updatedAt?: DateTimeFilter;
 
   @ApiProperty({
     required: false,

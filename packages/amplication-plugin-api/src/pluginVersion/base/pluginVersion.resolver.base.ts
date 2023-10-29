@@ -17,7 +17,7 @@ import * as nestAccessControl from "nest-access-control";
 import * as gqlACGuard from "../../auth/gqlAC.guard";
 import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
 import * as common from "@nestjs/common";
-import { Public } from "../../decorators/public.decorator";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { CreatePluginVersionArgs } from "./CreatePluginVersionArgs";
 import { UpdatePluginVersionArgs } from "./UpdatePluginVersionArgs";
@@ -35,8 +35,12 @@ export class PluginVersionResolverBase {
     protected readonly rolesBuilder: nestAccessControl.RolesBuilder
   ) {}
 
-  @Public()
   @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "PluginVersion",
+    action: "read",
+    possession: "any",
+  })
   async _pluginVersionsMeta(
     @graphql.Args() args: PluginVersionCountArgs
   ): Promise<MetaQueryPayload> {
@@ -46,16 +50,26 @@ export class PluginVersionResolverBase {
     };
   }
 
-  @Public()
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [PluginVersion])
+  @nestAccessControl.UseRoles({
+    resource: "PluginVersion",
+    action: "read",
+    possession: "any",
+  })
   async pluginVersions(
     @graphql.Args() args: PluginVersionFindManyArgs
   ): Promise<PluginVersion[]> {
     return this.service.findMany(args);
   }
 
-  @Public()
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => PluginVersion, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "PluginVersion",
+    action: "read",
+    possession: "own",
+  })
   async pluginVersion(
     @graphql.Args() args: PluginVersionFindUniqueArgs
   ): Promise<PluginVersion | null> {

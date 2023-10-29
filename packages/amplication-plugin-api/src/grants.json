@@ -32,6 +32,12 @@
   {
     "role": "user",
     "resource": "Plugin",
+    "action": "read:own",
+    "attributes": "*"
+  },
+  {
+    "role": "user",
+    "resource": "Plugin",
     "action": "create:any",
     "attributes": "*"
   },
@@ -49,6 +55,18 @@
   },
   {
     "role": "user",
+    "resource": "Plugin",
+    "action": "read:any",
+    "attributes": "*"
+  },
+  {
+    "role": "user",
+    "resource": "PluginVersion",
+    "action": "read:own",
+    "attributes": "*"
+  },
+  {
+    "role": "user",
     "resource": "PluginVersion",
     "action": "create:any",
     "attributes": "*"
@@ -63,6 +81,12 @@
     "role": "user",
     "resource": "PluginVersion",
     "action": "delete:any",
+    "attributes": "*"
+  },
+  {
+    "role": "user",
+    "resource": "PluginVersion",
+    "action": "read:any",
     "attributes": "*"
   }
 ]

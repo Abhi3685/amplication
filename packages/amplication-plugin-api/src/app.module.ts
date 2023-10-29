@@ -1,7 +1,9 @@
 import { Module, Scope } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { MorganInterceptor, MorganModule } from "nest-morgan";
+import { UserModule } from "./user/user.module";
 import { PluginModule } from "./plugin/plugin.module";
+import { PluginVersionModule } from "./pluginVersion/pluginVersion.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SecretsManagerModule } from "./providers/secrets/secretsManager.module";
@@ -10,10 +12,17 @@ import { ServeStaticOptionsService } from "./serveStaticOptions.service";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 
+import { ACLModule } from "./auth/acl.module";
+import { AuthModule } from "./auth/auth.module";
+
 @Module({
   controllers: [],
   imports: [
+    ACLModule,
+    AuthModule,
+    UserModule,
     PluginModule,
+    PluginVersionModule,
     HealthModule,
     PrismaModule,
     SecretsManagerModule,

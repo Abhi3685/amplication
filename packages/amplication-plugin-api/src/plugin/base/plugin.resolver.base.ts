@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import * as apollo from "apollo-server-express";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { CreatePluginArgs } from "./CreatePluginArgs";
 import { UpdatePluginArgs } from "./UpdatePluginArgs";
 import { DeletePluginArgs } from "./DeletePluginArgs";
@@ -21,10 +27,20 @@ import { PluginFindManyArgs } from "./PluginFindManyArgs";
 import { PluginFindUniqueArgs } from "./PluginFindUniqueArgs";
 import { Plugin } from "./Plugin";
 import { PluginService } from "../plugin.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Plugin)
 export class PluginResolverBase {
-  constructor(protected readonly service: PluginService) {}
+  constructor(
+    protected readonly service: PluginService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "Plugin",
+    action: "read",
+    possession: "any",
+  })
   async _pluginsMeta(
     @graphql.Args() args: PluginCountArgs
   ): Promise<MetaQueryPayload> {
@@ -34,12 +50,24 @@ export class PluginResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [Plugin])
+  @nestAccessControl.UseRoles({
+    resource: "Plugin",
+    action: "read",
+    possession: "any",
+  })
   async plugins(@graphql.Args() args: PluginFindManyArgs): Promise<Plugin[]> {
     return this.service.findMany(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => Plugin, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "Plugin",
+    action: "read",
+    possession: "own",
+  })
   async plugin(
     @graphql.Args() args: PluginFindUniqueArgs
   ): Promise<Plugin | null> {
@@ -50,7 +78,13 @@ export class PluginResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Plugin)
+  @nestAccessControl.UseRoles({
+    resource: "Plugin",
+    action: "create",
+    possession: "any",
+  })
   async createPlugin(@graphql.Args() args: CreatePluginArgs): Promise<Plugin> {
     return await this.service.create({
       ...args,
@@ -58,7 +92,13 @@ export class PluginResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Plugin)
+  @nestAccessControl.UseRoles({
+    resource: "Plugin",
+    action: "update",
+    possession: "any",
+  })
   async updatePlugin(
     @graphql.Args() args: UpdatePluginArgs
   ): Promise<Plugin | null> {
@@ -78,6 +118,11 @@ export class PluginResolverBase {
   }
 
   @graphql.Mutation(() => Plugin)
+  @nestAccessControl.UseRoles({
+    resource: "Plugin",
+    action: "delete",
+    possession: "any",
+  })
   async deletePlugin(
     @graphql.Args() args: DeletePluginArgs
   ): Promise<Plugin | null> {
