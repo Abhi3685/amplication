@@ -6,7 +6,7 @@ import {
 import isJSONValidator from "validator/lib/isJSON";
 
 export function IsJSONValue(validationOptions?: ValidationOptions) {
-  return function (object: Record<string, any>, propertyName: string) {
+  return function (object: Object, propertyName: string) {
     registerDecorator({
       name: "IsJSONValue",
       target: object.constructor,
