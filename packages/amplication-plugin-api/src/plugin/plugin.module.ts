@@ -1,11 +1,10 @@
-import { Module, forwardRef } from "@nestjs/common";
-import { AuthModule } from "../auth/auth.module";
+import { Module } from "@nestjs/common";
 import { PluginModuleBase } from "./base/plugin.module.base";
 import { PluginService } from "./plugin.service";
 import { PluginResolver } from "./plugin.resolver";
 
 @Module({
-  imports: [PluginModuleBase, forwardRef(() => AuthModule)],
+  imports: [PluginModuleBase],
   providers: [PluginService, PluginResolver],
   exports: [PluginService],
 })

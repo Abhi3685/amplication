@@ -7,19 +7,8 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  createdAt DateTime @default(now())
-  firstName String?
-  id        String   @id @default(cuid())
-  lastName  String?
-  password  String
-  roles     Json
-  updatedAt DateTime @updatedAt
-  username  String   @unique
-}
-
 model Plugin {
-  categories     Json     @default([])
+  categories     String   @default("")
   createdAt      DateTime @default(now())
   description    String?
   github         String?
